@@ -84,10 +84,46 @@
             }
         }
 
+        // Validate Love Messages
+        if (config.loveMessages) {
+            sanitized.loveMessages.extreme = limitStr(config.loveMessages.extreme, 200) || sanitized.loveMessages.extreme;
+            sanitized.loveMessages.high = limitStr(config.loveMessages.high, 200) || sanitized.loveMessages.high;
+            sanitized.loveMessages.normal = limitStr(config.loveMessages.normal, 200) || sanitized.loveMessages.normal;
+        }
+
+        // Validate Celebration
         if (config.celebration) {
             sanitized.celebration.title = limitStr(config.celebration.title) || sanitized.celebration.title;
             sanitized.celebration.message = limitStr(config.celebration.message, 500) || sanitized.celebration.message;
             sanitized.celebration.emojis = limitStr(config.celebration.emojis, 50) || sanitized.celebration.emojis;
+        }
+
+        // Validate Floating Emojis (limit array length and content)
+        if (config.floatingEmojis) {
+            if (Array.isArray(config.floatingEmojis.hearts)) {
+                sanitized.floatingEmojis.hearts = config.floatingEmojis.hearts
+                    .slice(0, 10) // Limit to 10 distinct emojis
+                    .filter(e => typeof e === 'string' && e.length <= 10); // Basic emoji length check
+                if (sanitized.floatingEmojis.hearts.length === 0) sanitized.floatingEmojis.hearts = DEFAULT_CONFIG.floatingEmojis.hearts;
+            }
+            if (Array.isArray(config.floatingEmojis.bears)) {
+                sanitized.floatingEmojis.bears = config.floatingEmojis.bears
+                    .slice(0, 10)
+                    .filter(e => typeof e === 'string' && e.length <= 10);
+                if (sanitized.floatingEmojis.bears.length === 0) sanitized.floatingEmojis.bears = DEFAULT_CONFIG.floatingEmojis.bears;
+            }
+        }
+
+        // Validate Animations
+        if (config.animations) {
+            sanitized.animations.floatDuration = limitStr(config.animations.floatDuration, 10) || sanitized.animations.floatDuration;
+            sanitized.animations.floatDistance = limitStr(config.animations.floatDistance, 10) || sanitized.animations.floatDistance;
+            sanitized.animations.bounceSpeed = limitStr(config.animations.bounceSpeed, 10) || sanitized.animations.bounceSpeed;
+            
+            const explosionSize = parseFloat(config.animations.heartExplosionSize);
+            if (!isNaN(explosionSize) && explosionSize >= 0.5 && explosionSize <= 5) {
+                sanitized.animations.heartExplosionSize = explosionSize;
+            }
         }
 
         // Color validation (hex only)
@@ -103,8 +139,15 @@
         // Music validation
         if (config.music) {
             if (typeof config.music.enabled === 'boolean') sanitized.music.enabled = config.music.enabled;
-            if (config.music.musicUrl && config.music.musicUrl.startsWith('https://')) {
-                sanitized.music.musicUrl = config.music.musicUrl;
+            if (config.music.musicUrl && typeof config.music.musicUrl === 'string' && config.music.musicUrl.startsWith('https://')) {
+                sanitized.music.musicUrl = limitStr(config.music.musicUrl, 500);
+            }
+            if (config.music.startText) sanitized.music.startText = limitStr(config.music.startText, 50) || sanitized.music.startText;
+            if (config.music.stopText) sanitized.music.stopText = limitStr(config.music.stopText, 50) || sanitized.music.stopText;
+            
+            const vol = parseFloat(config.music.volume);
+            if (!isNaN(vol) && vol >= 0 && vol <= 1) {
+                sanitized.music.volume = vol;
             }
         }
 
