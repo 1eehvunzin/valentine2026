@@ -52,8 +52,7 @@ const CONFIG = {
   // Messages that appear after they say "Yes!"
   celebration: {
     title: "",
-    message:
-      "ˊᗜˋ 이런 것도 만들어보고 난 정말 행복한 공대생이야 ...\n어땠는지 연락 남겨줘",
+    message: "ㅎㅎㅎㅎㅎ\n어땠는지 연락 남겨줘",
     emojis: "😇", // These will bounce around
   },
 
